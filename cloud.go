@@ -30,10 +30,10 @@ func GetCloudEnv() CloudEnv {
 	return env
 }
 
-func IsCloud(env *CloudEnv) bool {
+func (env *CloudEnv) IsCloud() bool {
 	return env.Vendor != ""
 }
 
-func IsCloudProd(env *CloudEnv) bool {
+func (env *CloudEnv) IsProd() bool {
 	return env.Env == CloudEnvProd
 }
