@@ -2,10 +2,10 @@ package common
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
-
-	"go.uber.org/multierr"
 )
 
 type TokenKey struct {
@@ -14,9 +14,6 @@ type TokenKey struct {
 }
 
 func GetTokenKey(tokenKeyURL string, clientID string, clientSecret string) (key *TokenKey, err error) {
-	if err != nil {
-		return
-	}
 	req, err := http.NewRequest(http.MethodGet, tokenKeyURL, nil)
 	if err != nil {
 		return
@@ -27,8 +24,12 @@ func GetTokenKey(tokenKeyURL string, clientID string, clientSecret string) (key 
 		return
 	}
 	defer func() {
-		err = multierr.Append(err, resp.Body.Close())
+		err = errors.Join(err, resp.Body.Close())
 	}()
+	if resp.StatusCode != http.StatusOK {
+		err = fmt.Errorf("invalid request/invalid response, code %d", resp.StatusCode)
+		return
+	}
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return
