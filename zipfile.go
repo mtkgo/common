@@ -3,6 +3,7 @@ package common
 import (
 	"archive/zip"
 	"context"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,7 +19,7 @@ const (
 	pathSep = string(os.PathSeparator)
 )
 
-func BuildZip(assetFilesDir string, outputDir string, assetName string) error {
+func BuildZip(ctx context.Context, assetFilesDir string, outputDir string, assetName string) error {
 	if assetName == "" {
 		assetName = DefaultAssetName
 	}
@@ -34,14 +35,14 @@ func BuildZip(assetFilesDir string, outputDir string, assetName string) error {
 	}
 	defer zipFile.Close()
 
-	if !strings.HasSuffix(assetFilesDir, pathSep) {
-		assetFilesDir += pathSep
+	inputDir := filepath.Clean(assetFilesDir)
+	if !strings.HasSuffix(inputDir, pathSep) {
+		inputDir += pathSep
 	}
 
-	ctx := context.TODO()
-
 	files, err := archives.FilesFromDisk(ctx, nil, map[string]string{
-		assetFilesDir: "",
+		// rootOnDisk -> rootInArchive
+		inputDir: "",
 	})
 	if err != nil {
 		return err
@@ -54,4 +55,40 @@ func BuildZip(assetFilesDir string, outputDir string, assetName string) error {
 	}
 
 	return format.Archive(ctx, zipFile, files)
+}
+
+func UnZip(ctx context.Context, inputFile string, outputDir string) error {
+	zipFile, err := os.Open(inputFile)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+
+	var format archives.Zip
+	return format.Extract(context.TODO(), zipFile, func(ctx context.Context, info archives.FileInfo) error {
+		if info.IsDir() {
+			dir := filepath.Join(outputDir, info.NameInArchive)
+			return os.MkdirAll(dir, 0o755)
+		}
+
+		// NOTE: only dir/file in out case
+
+		inFile, err := info.Open()
+		if err != nil {
+			return err
+		}
+		defer inFile.Close()
+
+		path := filepath.Join(outputDir, info.NameInArchive)
+		os.MkdirAll(filepath.Dir(path), 0o755)
+		outFile, err := os.Create(path)
+		if err != nil {
+			return err
+		}
+		// os.Chmod(outPath, info.Mode())
+		defer outFile.Close()
+
+		_, err = io.Copy(outFile, inFile)
+		return err
+	})
 }
