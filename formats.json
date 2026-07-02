@@ -1,0 +1,91 @@
+[
+  {
+    "id": "FBX",
+    "description": "",
+    "extensions": [
+      ".fbx"
+    ]
+  },
+  {
+    "id": "IFC",
+    "description": "",
+    "extensions": [
+      ".ifc"
+    ]
+  },
+  {
+    "id": "glTF",
+    "description": "",
+    "extensions": [
+      ".glb",
+      ".gltf"
+    ]
+  },
+  {
+    "id": "OBJ",
+    "description": "",
+    "extensions": [
+      ".obj"
+    ]
+  },
+  {
+    "id": "RVM",
+    "description": "",
+    "extensions": [
+      ".rvm"
+    ]
+  },
+  {
+    "id": "USD",
+    "description": "",
+    "extensions": [
+      ".usda",
+      ".usdc",
+      ".usdz",
+      ".usd"
+    ]
+  },
+  {
+    "id": "STEP",
+    "description": "",
+    "extensions": [
+      ".step",
+      ".stp"
+    ]
+  },
+  {
+    "id": "IGES",
+    "description": "",
+    "extensions": [
+      ".iges"
+    ]
+  },
+  {
+    "id": "BREP",
+    "description": "",
+    "extensions": [
+      ".brep"
+    ]
+  },
+  {
+    "id": "STL",
+    "description": "",
+    "extensions": [
+      ".stl"
+    ]
+  },
+  {
+    "id": "VRML",
+    "description": "",
+    "extensions": [
+      ".vrml"
+    ]
+  },
+  {
+    "id": "MGL",
+    "description": "",
+    "extensions": [
+      ".mgl"
+    ]
+  }
+]
