@@ -8,42 +8,46 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"sync"
 )
 
 //go:embed formats.json
 var embedFS embed.FS
 
+type FormatID string
+
 type Format struct {
-	ID          string   `json:"id"`
+	ID          FormatID `json:"id"`
 	Description string   `json:"description"`
 	Extensions  []string `json:"extensions"`
 }
 
-func GetSupportedFormats() []Format {
-	var formats []Format
+type Formats struct {
+	Formats []Format   `json:"formats"`
+	BIM     []FormatID `json:"bim"`
+	CAD     []FormatID `json:"cad"`
+}
+
+func parseFormats() Formats {
+	var result Formats
 	f, err := embedFS.Open("formats.json")
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
-	err = json.NewDecoder(f).Decode(&formats)
+	err = json.NewDecoder(f).Decode(&result)
 	if err != nil {
 		panic(err)
 	}
-	return formats
+	return result
 }
 
-var (
-	once             sync.Once
-	supportedFormats []Format
-)
+var formats = parseFormats()
+
+func GetSupportedFormats() []Format {
+	return formats.Formats
+}
 
 func DetectSupportedFiles(dir string) ([]string, int64) {
-	once.Do(func() {
-		supportedFormats = GetSupportedFormats()
-	})
-
 	var mainFiles []string
 	var totalSize int64
 
@@ -60,7 +64,7 @@ func DetectSupportedFiles(dir string) ([]string, int64) {
 		}
 		totalSize += info.Size()
 		ext := strings.ToLower(filepath.Ext(p))
-		ok := slices.ContainsFunc(supportedFormats, func(f Format) bool {
+		ok := slices.ContainsFunc(formats.Formats, func(f Format) bool {
 			return slices.Contains(f.Extensions, ext)
 		})
 		if ok {
@@ -70,4 +74,18 @@ func DetectSupportedFiles(dir string) ([]string, int64) {
 	})
 
 	return mainFiles, totalSize
+}
+
+func IsBIM(id FormatID, forceBIM bool) bool {
+	if forceBIM {
+		return true
+	}
+	return slices.Contains(formats.BIM, id)
+}
+
+func IsCAD(id FormatID, forceCAD bool) bool {
+	if forceCAD {
+		return true
+	}
+	return slices.Contains(formats.CAD, id)
 }
