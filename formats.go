@@ -76,17 +76,11 @@ func DetectSupportedFiles(dir string) ([]string, int64) {
 	return mainFiles, totalSize
 }
 
-func IsBIM(id FormatID, forceBIM bool) bool {
-	if forceBIM {
-		return true
-	}
+func IsBIM(id FormatID) bool {
 	return slices.Contains(formats.BIM, id)
 }
 
-func IsCAD(id FormatID, forceCAD bool) bool {
-	if forceCAD {
-		return true
-	}
+func IsCAD(id FormatID) bool {
 	return slices.Contains(formats.CAD, id)
 }
 

@@ -8,22 +8,20 @@ import (
 )
 
 func TestIsBIM(t *testing.T) {
-	assert.Equal(t, true, common.IsBIM("RVM", false))
-	assert.Equal(t, true, common.IsBIM("IFC", false))
+	assert.Equal(t, true, common.IsBIM("RVM"))
+	assert.Equal(t, true, common.IsBIM("IFC"))
 
-	assert.Equal(t, true, common.IsBIM("XXX", true))
-
-	assert.Equal(t, false, common.IsBIM("glTF", false))
+	assert.Equal(t, false, common.IsBIM("glTF"))
+	assert.Equal(t, false, common.IsBIM("XXX"))
 }
 
 func TestIsCAD(t *testing.T) {
-	assert.Equal(t, true, common.IsCAD("BREP", false))
-	assert.Equal(t, true, common.IsCAD("IGES", false))
-	assert.Equal(t, true, common.IsCAD("STEP", false))
+	assert.Equal(t, true, common.IsCAD("BREP"))
+	assert.Equal(t, true, common.IsCAD("IGES"))
+	assert.Equal(t, true, common.IsCAD("STEP"))
 
-	assert.Equal(t, true, common.IsCAD("XXX", true))
-
-	assert.Equal(t, false, common.IsCAD("IFC", false))
+	assert.Equal(t, false, common.IsCAD("IFC"))
+	assert.Equal(t, false, common.IsCAD("XXX"))
 }
 
 func TestGetFormatID(t *testing.T) {
