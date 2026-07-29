@@ -1,8 +1,11 @@
 {
   "bim": [
+    "RVM",
     "IFC"
   ],
   "cad": [
+    "BREP",
+    "IGES",
     "STEP"
   ],
   "formats": [

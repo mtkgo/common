@@ -89,3 +89,13 @@ func IsCAD(id FormatID, forceCAD bool) bool {
 	}
 	return slices.Contains(formats.CAD, id)
 }
+
+func GetFormatID(filename string) FormatID {
+	ext := strings.ToLower(filepath.Ext(filename))
+	for _, f := range formats.Formats {
+		if slices.Contains(f.Extensions, ext) {
+			return f.ID
+		}
+	}
+	return ""
+}
